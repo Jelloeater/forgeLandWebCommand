@@ -1,18 +1,13 @@
 __author__ = 'Jesse'
 
 import os
-from wsgiref.simple_server import make_server
-from wsgiref.util import setup_testing_defaults
+import string
 import socket
+from wsgiref.simple_server import make_server
+from wsgiref.util import request_uri
 
 port = 8080
 ip = socket.gethostbyname(socket.gethostname())
-
-
-def sshCommand(commandIn):
-	# Runs command on local machine if string matches
-	if commandIn == "reboot":
-		os.system("reboot")
 
 
 def main():
@@ -26,11 +21,14 @@ def webHandler(environ, start_response):
 	headers = [('Content-type', 'text/plain')]
 	start_response(status, headers)
 
+	urlString = request_uri(environ, include_query=0)
 
+	splitter = str(port)+"/"
+	splitObj = string.split(urlString, splitter)
+	command = splitObj[1]
 
-
-	ret = "fuck"
-	return ret
-
+	if command == "rebootForgeLand":
+		os.system("reboot")
+	return ""
 
 main()
