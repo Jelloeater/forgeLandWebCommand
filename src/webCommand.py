@@ -6,7 +6,7 @@ import socket
 from wsgiref.simple_server import make_server
 from wsgiref.util import request_uri
 
-port = 8080
+port = 9000
 ip = socket.gethostbyname(socket.gethostname())
 
 
@@ -22,13 +22,14 @@ def webHandler(environ, start_response):
 	start_response(status, headers)
 
 	urlString = request_uri(environ, include_query=0)
+	if urlString != "http://"+str(ip)+":"+str(port)+"/":  # Parses off end of URL if present
+		splitter = str(port)+"/"
+		splitObj = string.split(urlString, splitter)
+		command = splitObj[1]
 
-	splitter = str(port)+"/"
-	splitObj = string.split(urlString, splitter)
-	command = splitObj[1]
+		if command == "rebootForgeLand":
+			os.system("reboot")
 
-	if command == "rebootForgeLand":
-		os.system("reboot")
 	return ""
 
 main()
