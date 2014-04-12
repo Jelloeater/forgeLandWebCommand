@@ -22,16 +22,14 @@ def main():
 
 
 def webHandler(environ, start_response):
-	setup_testing_defaults(environ)
-
 	status = '200 OK'
 	headers = [('Content-type', 'text/plain')]
-
 	start_response(status, headers)
-	ret = "fuck"
 
-	# ret = ["%s: %s\n" % (key, value)
-	#        for key, value in environ.iteritems()]
+
+
+
+	ret = "fuck"
 	return ret
 
 
