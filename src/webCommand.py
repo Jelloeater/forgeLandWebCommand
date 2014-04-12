@@ -1,8 +1,8 @@
 __author__ = 'Jesse'
 
 import os
-from wsgiref.simple_server import make_server, demo_app, WSGIRequestHandler
-from io import StringIO
+from wsgiref.simple_server import make_server
+from wsgiref.util import setup_testing_defaults
 import socket
 
 port = 8080
@@ -17,23 +17,22 @@ def sshCommand(commandIn):
 
 def main():
 	print("Serving on: " + str(ip) + ":" + str(port))
-	server_address = (ip, port)
-	httpd = make_server(ip, port, webHandler.parser)
+	httpd = make_server(ip, port, webHandler)
 	httpd.serve_forever()
 
 
-class webHandler(WSGIRequestHandler):
-	def parser(environ, start_response):
-		from io import StringIO
+def webHandler(environ, start_response):
+	setup_testing_defaults(environ)
 
-		stdout = StringIO()
-		print"Hello world!FUCK"
-		h = sorted(environ.items())
-		for k, v in h:
-			print k, '=', repr(v)
+	status = '200 OK'
+	headers = [('Content-type', 'text/plain')]
 
-		start_response("200 OK", [('Content-Type', 'text/plain; charset=utf-8')])
-		return [stdout.getvalue().encode("utf-8")]
+	start_response(status, headers)
+	ret = "fuck"
+
+	# ret = ["%s: %s\n" % (key, value)
+	#        for key, value in environ.iteritems()]
+	return ret
 
 
 main()
