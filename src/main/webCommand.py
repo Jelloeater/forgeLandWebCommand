@@ -11,6 +11,7 @@ from wsgiref.util import request_uri
 ip = "localhost"
 port = 8080
 
+
 def main():
 	print("Serving on: " + str(ip) + ":" + str(port))
 	httpd = make_server(ip, port, webHandler)
@@ -41,6 +42,7 @@ def webHandler(environ, start_response):
 
 	return retStr
 
+
 def dateTimeToJSON():
 	import time
 	import json
@@ -60,9 +62,8 @@ def dateTimeToJSON():
 
 	rawJSON = json.JSONEncoder.encode()
 
-
-
 	return rawJSON
+
 
 def parseDay(dayStr):
 	if dayStr == "Sun": dayInt = 1
@@ -73,6 +74,7 @@ def parseDay(dayStr):
 	if dayStr == "Fri": dayInt = 6
 	if dayStr == "Sat": dayInt = 7
 	return dayInt
+
 
 def parseMonth(monthStr):
 	if monthStr == "Jan": monthInt = 1
@@ -88,6 +90,7 @@ def parseMonth(monthStr):
 	if monthStr == "Nov": monthInt = 11
 	if monthStr == "Dec": monthInt = 12
 	return monthInt
+
 
 def timeStringOutput(hour, minute):
 	minFormat = ""
@@ -115,6 +118,6 @@ def timeStringOutput(hour, minute):
 
 	return retStr
 
-
-# main() # TODO Re-enable main when done
-dateTimeToJSON()
+if __name__ == "__main__": # Runs Script
+	# main() # TODO Re-enable main when done
+	dateTimeToJSON()
