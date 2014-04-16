@@ -28,9 +28,10 @@ def webHandler(environ, start_response):
 
 	urlString = request_uri(environ, include_query=0)
 	if urlString != "http://" + str(ip) + ":" + str(port) + "/":  # Parses off end of URL if present
-		splitter = str(port) + "/"
-		splitObj = string.split(urlString, splitter)
-		command = splitObj[1]
+
+		splitObj = str.split(urlString, "/")
+
+		command = splitObj[3]
 
 		if command == "rebootForgeLand":
 			retStr = "Rebooting NOW!"
