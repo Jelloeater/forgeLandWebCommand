@@ -5,6 +5,8 @@ import string
 import socket
 from wsgiref.simple_server import make_server
 from wsgiref.util import request_uri
+import json
+import time
 
 # port = 9000
 # ip = socket.gethostbyname(socket.gethostname())
@@ -25,7 +27,7 @@ def webHandler(environ, start_response):
 	start_response(status, headers)
 
 	urlString = request_uri(environ, include_query=0)
-	if urlString != "http://" + str(ip) + ":"+ str(port) + "/":  # Parses off end of URL if present
+	if urlString != "http://" + str(ip) + ":" + str(port) + "/":  # Parses off end of URL if present
 		splitter = str(port) + "/"
 		splitObj = string.split(urlString, splitter)
 		command = splitObj[1]
@@ -35,43 +37,34 @@ def webHandler(environ, start_response):
 			os.system("reboot")
 
 		if command == "time":
-			retStr = dateTimeToJSON.timeStringOutput(4,20)
-
-			rawJSONobj = dateTimeToJSON
-			print(rawJSONobj.rawJSONstr)
+			t = dateTimeObj()
+			retStr = timeStringOutput(t.hour, t.minute)
 
 			# TODO Change to proper time input
+
+		if command == "timeJSON":
+			retStr = json.dumps(dateTimeObj().__dict__, sort_keys=True)  # Asks for timeDate object, then converts to JSON string
+
 	return retStr
 
 
-class CurrentTime:  # Just a dummy class to hold stuff
-	def __init__(self):
-		import time
-
-		# Example: "Mon Apr 14 23:20:23 2014"
-
-		timeStr = time.asctime()
-
-		self.year = int(timeStr[20:24])
-		self.month = parseMonth(timeStr[4:7])
-		self.day = int(timeStr[8:10])
-		self.hour = int(timeStr[10:13])
-		self.minute = int(timeStr[14:16])
-		self.second = int(timeStr[17:19])
-		self.dayOfWeek = parseDay(timeStr[0:3])
+class Empty:
+	pass
 
 
-def dateTimeToJSON():
-	import json
-	rawJSON = ""
-	jsonBag = CurrentTime()
+def dateTimeObj():
+	timeStr = time.asctime()
+	o = Empty()
 
-	# FIXME Need to add either class or dictionary to hold values for JSON converter
-	x = json.dumps(jsonBag.__dict__)
-	print(x)
+	o.year = int(timeStr[20:24])
+	o.month = parseMonth(timeStr[4:7])
+	o.day = int(timeStr[8:10])
+	o.hour = int(timeStr[10:13])
+	o.minute = int(timeStr[14:16])
+	o.second = int(timeStr[17:19])
+	o.dayOfWeek = parseDay(timeStr[0:3])
 
-	# FIXME Move local vars into constructor and THEN have the constructor call the toJSON method
-	return rawJSON
+	return o
 
 
 def parseDay(dayStr):
@@ -102,16 +95,16 @@ def parseMonth(monthStr):
 
 
 def timeStringOutput(hour, minute):
+	# Convert 24 Hour to 12 Hr
+	# Return time in string format
+
 	minFormat = ""
-	# Convert to local time
-	hour += 5
+
 	amPm = "p"
-	if hour > 12: # This is twice in-case the time is over 24 hours, due to my bad math
+	if hour >= 13: # This is twice in-case the time is over 24 hours, due to my bad math
 		hour -= 12
 		amPm = "a"
-	if hour > 12:
-		hour -= 12
-	amPm = "a"
+
 	if minute < 9:
 		minFormat = "0"
 
@@ -123,5 +116,4 @@ def timeStringOutput(hour, minute):
 
 
 if __name__ == "__main__": # Runs Script
-	# main() # TODO Re-enable main when done
-	dateTimeToJSON()
+	main()
